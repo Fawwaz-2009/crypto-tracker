@@ -1,8 +1,11 @@
-import { configureStore, combineReducers, getDefaultMiddleware } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import { coinsAPi } from "../features/coins";
 
 const store = configureStore({
   reducer: combineReducers({
+    [coinsAPi.reducerPath]: coinsAPi.reducer,
   }),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(coinsAPi.middleware),
   devTools: true,
 });
 

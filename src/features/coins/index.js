@@ -1,0 +1,1 @@
+export { coinsAPi } from "./api";
