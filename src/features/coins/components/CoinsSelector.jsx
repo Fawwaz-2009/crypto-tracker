@@ -1,21 +1,27 @@
 import { useGetCoinsListQuery } from "../api";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import FuzzySearch from "fuzzy-search";
 import useCoins from "../hooks";
+import {debounce} from '../helper';
 
 
 export default function CoinsSelector() {
     const { data: coinsList, isLoading } = useGetCoinsListQuery();
     const { appendTrackedCoinsList } = useCoins();
     const [searchInput, setSearchInput] = useState("");
+    const searcher = useMemo(()=> new FuzzySearch(coinsList, ["name", "symbol"]), [coinsList]);
+    const [filteredCoinsList, setFilteredCoinsList] = useState([])
+    const changeHandler = (input)=> setFilteredCoinsList(searcher.search(input))
+    const debouncedChangeHandler = useMemo(
+      () => debounce(changeHandler, 300)
+    , [searcher]);
+
   
     if (isLoading) {
       return <h1>isLoading</h1>;
     }
   
     const isHidesSearchResults = searchInput.length === 0 ? "invisible" : "";
-    const searcher = new FuzzySearch(coinsList, ["name", "symbol"]);
-    const filteredCoinsList = searcher.search(searchInput);
   
     return (
       <div>
@@ -25,7 +31,10 @@ export default function CoinsSelector() {
           type="text"
           name="coinSearchInput"
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
+          onChange={(e) => {
+            setSearchInput(e.target.value)
+            debouncedChangeHandler(e.target.value)
+          }}
         />
         <ul className={`h-52 overflow-y-scroll mb-5 ${isHidesSearchResults}`}>
           {filteredCoinsList.map(({ id, name, symbol }) => (
