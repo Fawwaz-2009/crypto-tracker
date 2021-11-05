@@ -1,14 +1,7 @@
 import CoinRow from './CoinRow';
 
-const DEFAULT_COINS = [
-    {id:"bitcoin", name:"bitcoin"},
-    {id:"ethereum", name:"ethereum"},
-    {id:"tether", name:"tether"},
-    {id:"usd-coin", name:"usd coin"},
-    {id:"shiba-inu", name:"shiba inu"},
-]
 
-export default function CoinsTable() {
+export default function CoinsTable({ trackedCoinsList }) {
   return (
     <table className="min-w-full divide-y divide-gray-200">
       <thead className="bg-gray-50">
@@ -22,7 +15,7 @@ export default function CoinsTable() {
         </tr>
       </thead>
       <tbody className="bg-white divide-y divide-gray-200">
-        {DEFAULT_COINS.map(({ id, name }) => (
+        {trackedCoinsList.map(({ id, name }) => (
           <CoinRow key={id} id={id} name={name} timeRange={"7"} />
         ))}
       </tbody>
